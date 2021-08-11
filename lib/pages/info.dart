@@ -75,12 +75,14 @@ import 'package:http/http.dart' as http;
          builder: (context, snapshot) {
            if (snapshot.connectionState == ConnectionState.none &&
               !snapshot.hasData) {
-        //print('project snapshot data is: ${projectSnap.data}');
-        return Container();
-      }
+              //print('project snapshot data is: ${projectSnap.data}');
+              return Container();
+            }
+            else{
            return ListView.builder(
-             itemCount: snapshot.data.length,
+             itemCount: snapshot.data?.length,
             itemBuilder: (context, index) {
+              Details person=snapshot.hasData?snapshot.data![index]:Details (name: "", phone: "", email:"");
                return Column(
                  children: <Widget>[
                  Container(
@@ -94,7 +96,7 @@ import 'package:http/http.dart' as http;
                           // ignore: prefer_const_literals_to_create_immutables
                           children: [ Text(
                             // ignore: unnecessary_string_interpolations
-                            snapshot.data!.name,
+                            person.name,
                             textAlign: TextAlign.end,
                             style: const TextStyle(
                               fontSize: 20.0,
@@ -115,18 +117,18 @@ import 'package:http/http.dart' as http;
                      //mainAxisAlignment: MainAxisAlignment.,
                     children: [
                       Text(
-                        snapshot.data!.phone,
+                        person.phone,
                         style: const TextStyle(
-                          color: Colors.red,
+                          color: Colors.black,
                           fontSize: 28,
                         ),
                       ),
                       const SizedBox(height: 10.0),
                       Text(
-                        snapshot.data!.email,
+                        person.email,
                         style: const TextStyle(
                           fontSize: 28.0,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       )
 
@@ -143,6 +145,7 @@ import 'package:http/http.dart' as http;
                );
              }
            );
+            }
          }
        ),
        

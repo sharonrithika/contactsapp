@@ -62,21 +62,33 @@ class _HomeState extends State<Home> {
   //Map<String, dynamic> data= jsonDecode(response.body);
   // ignore: avoid_print
   //print(data);
-  Future<Details> deets()
-  async {
-  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
-  // ignore: avoid_print
-  print(response.body);
-  return Details.fromJson(jsonDecode(response.body));
+  // Future<Details> deets()
+  // async {
+  // final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+  // // ignore: avoid_print
+  // //print(response.body);
+  // return Details.fromJson(jsonDecode(response.body));
   
 
+  // }
+  //late Future<Details> futurealbum;
+  Future<List<Details>> deets()
+  async {
+  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+  List people=jsonDecode(response.body);
+  List<Details> peoplelist= [];
+  people.forEach((element) {
+    Details variable=Details.fromJson(element);
+    peoplelist.add(variable);
+  });
+  return peoplelist;
+
   }
-  late Future<Details> futurealbum;
   
   @override
   void initState(){
     super.initState();
-    futurealbum = deets();
+    //futurealbum = deets();
    
   }
 
@@ -92,16 +104,20 @@ class _HomeState extends State<Home> {
         centerTitle: true,
 
       ),
-      body: FutureBuilder<Details>(
-        future: futurealbum,
+      body: FutureBuilder<List<Details>>(
+        future: deets(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.none &&
+              !snapshot.hasData) {
+              //print('project snapshot data is: ${projectSnap.data}');
+              return const CircularProgressIndicator();
+            }
+          else{
           return ListView.builder( 
-            //itemCount: info.length,
+            itemCount: snapshot.data?.length,
             itemBuilder: (context, index){
-
-              if (snapshot.hasData){
-              
-              return Padding(
+              Details person=snapshot.hasData?snapshot.data![index]:Details (name: "", phone: "", email:"");
+               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
                 child: Card(
                   child: ListTile(
@@ -109,7 +125,7 @@ class _HomeState extends State<Home> {
                       //Contactinfo(index);
                       Navigator.pushNamed(context, '/info');
                     },
-                    title: Text(snapshot.data!.name),
+                    title: Text(person.name),
                     leading: CircleAvatar(
                       backgroundColor: Colors.yellow[200],
                     ),
@@ -118,14 +134,15 @@ class _HomeState extends State<Home> {
                   
               );
               
-            }
-            else if (snapshot.hasError)
-            {
-              return Text('${snapshot.error}');
-            }
-            return const CircularProgressIndicator();
-            }
+            
+            // else if (snapshot.hasError)
+            // {
+            //   return Text('${snapshot.error}');
+            // }
+            // return const CircularProgressIndicator();
+             }
           );
+            }
         }
       ),
   
