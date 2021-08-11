@@ -1,8 +1,12 @@
 
   // ignore_for_file: avoid_print
   
-import 'package:http/http.dart';
 import 'dart:convert';
+import 'dart:async';
+import 'package:contacts/services/details.dart';
+import 'package:http/http.dart' as http;
+
+//import 'dart:convert';
 //import 'package:intl/intl.dart';
 
 class Display{
@@ -13,11 +17,38 @@ class Display{
   //String website;
 
   Display({required this.name, required this.email, required this.phone});
-  Future<void> deets()
+  Future<Details> deets()
   async {
-  Response response = await get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
-  Map data= jsonDecode(response.body);
-  print(data);
+  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+  if(response.statusCode==200){
+  return Details.fromJson(jsonDecode(response.body)[0]);
+  }
+  else{
+    throw Exception("Failed to load");
+  }
+//   Future<void> main() async {
+//   // responseBody is the same response.body
+
+//   // When response is a list of objects
+//   final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+//   final objects = value.json((e) => Details.fromJson(e));
+//   var obj = list[0];
+//   print(obj.category);
+//   print(obj.fileName);
+
+//   // When response is an object
+//   obj = response.body.json((e) => Details.fromJson(e));
+//   print(obj.category);
+//   print(obj.fileName);
+// }
+
+  }
+  factory Display.fromJson(Map<String, dynamic> json){
+    return Display(
+      name: json['name'],
+      email: json['email'],
+      phone: json['phone'],
+    ) ;
   }
 
 
